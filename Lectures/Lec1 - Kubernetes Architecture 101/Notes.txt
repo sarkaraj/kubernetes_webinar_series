@@ -1,0 +1,35 @@
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+KUBERNETS ARCHITECTURE
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+--> Kubernetes understands declarative artifacts which are declared in YAML file. These YAML definition are submitted to the master.
+--> Kubernetes has a master-slave architecture.
+--> Registry is the where we store the docker images. It can be a private registry as well.
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+
+
+
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+KUBERNETES MASTER-
+'Master' of the master-slave architecuture.
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+--> API Server is responsible for exposing various API's. It forms the front-end rather the gatekeeper that controls the entry to the cluster.
+--> Scheduler is responsible for physically scheduling multiple artifacts (like containers, pods etc.) across multiple nodes.
+    Depending on the artifact "constraints" (like memory, cpu) and the availability of the resources across the cluster it will Schedule the pods accordingly.
+--> Controller is responsible for overall coordination and health of the entire cluster. It ensures that the nodes are up and running and the pods are running
+    in the right way.
+--> 'etcd' is a distributed key-value database. 'etcd' stores the current cluster state. At any point of time, any component of the cluster can query the
+    'etcd' to get the current cluster state. This is the single source of truth in the Kubernetes infrastructure.
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+
+
+
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+KUBERNETES NODE-
+It is minion or 'slave' that does the heavy lifting.
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+--> 'kube-proxy' - a typical but critical element in a kubernetes node. It is responsible for maintaining the entire network configuration.
+    It ensures that communication is maintained efficiently across the cluster.
+-->  'Docker' is the main component for creating the containers.
+--> kubelet - this service talks to the API Server. It reports the current health and status of the node to the 'etcd' and the Kubernetes Master.
+--> fluentd - this is responsible for managing the logs and the talking to the central logging mechanism (if configured).
+--> pod - *to be filled at a later lecture*
