@@ -29,7 +29,109 @@ It is minion or 'slave' that does the heavy lifting.
 --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
 --> 'kube-proxy' - a typical but critical element in a kubernetes node. It is responsible for maintaining the entire network configuration.
     It ensures that communication is maintained efficiently across the cluster.
--->  'Docker' is the main component for creating the containers.
+--> 'Docker' is the main component for creating the containers.
 --> kubelet - this service talks to the API Server. It reports the current health and status of the node to the 'etcd' and the Kubernetes Master.
 --> fluentd - this is responsible for managing the logs and the talking to the central logging mechanism (if configured).
 --> pod - *to be filled at a later lecture*
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+
+
+
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+A SIMPLE CONTAINERIZED APPLICATION
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+--> It's a three tier application.
+    1. A database - redis in this case.
+    2. Web App - a API end-point exposed as a python flask application.
+    3. Client - which can be curl or any other API consumer.
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+
+
+
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+KUBERNETES PODS-
+This is fundamental unit of deployment. Group of one or more containers that are always co-located, co-scheduled and run in a shared
+context.
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+--> This enables us to package multiple processes running using several containers but 'packed' as a single pod. If we scale then we are
+    basically multiplying the number of containers. Basically let's say we have two containers inside a pod. If such a pod is replicated twice
+    then we are basically adding two containers at a time.
+--> A pod can run multiple containers.
+
+--> Labels and Selectors
+      The pods makes a very loosely coupled environment. For example, every pod is completely independent and autonomous. There is no notion
+      of bringing multiple pods together and exposing them as one end-point. Labels is the essential glue to associate multiple objects together.
+      Labels and Selectors are basically the metadata assigned to the pods.
+
+--> Deploying a Pod
+      1. Define a pod in YAML.
+      2. Submit the definitions to the Master. The Master will take these two definitions, parses the information and the constraints and chooses a node and hands it over.
+      3. The node will parse the definitions and pulls the appropriate docker images from a registry.
+      4. The node then provisions the images within itself and reports the health to the master.
+      5. Once ready, other kubernetes components can start interacting with it.
+
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+
+
+
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+SERVICES-
+Helps in communication between pods. Allows us to expose pods both internally and externally.
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+--> Serves as the endpoints for the pods.
+
+--> Exposing Services
+      For our use case there are two services.
+        1. Database Service - responsible for exposing the redis database. It's called a cluster IP since the IP is available only within the cluster.
+        2. Web Service - responsible for exposing the python-flask application service. It's called node port because every node participating in the kubernetes cluster
+                        will be exposing that application in the same port. It doesn't matter which node we hit, as long as we are hitting the port it gets bounced
+                        to the appropriate container or the pod it will start responding to the request. In our case, this is going to be exposed to the outside world.
+
+                        NOTE: It is note a good idea to expose databases in the node port.
+
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+
+
+
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+DEMO
+--> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> --> -->
+Docker images:-
+1. janakiram/web
+2. redis
+
+
+:: USING DOCKER ::
+
+In the docker-compose file, the important thing to note is that we have specified an explicit container name.to the redis container.
+
+###
+redis:
+  image: redis:latest
+  container_name: redis     <---- NOTE THIS LINE
+###
+
+To run the docker-compose file run:
+-- $ docker-compose up -d
+
+To check whether it runs or not
+-- $ curl localhost:3000
+
+
+
+:: USING KUBERNETES ::
+We are going to use 'kubectl' which is the command line control for Kubernetes.
+
+To see the nodes of the kubernetes cluster:-
+-- $ kubectl get nodes
+
+
+To see the cluster information:-
+-- $ kubectl cluster-info
+
+
+Another way to explore kubernetes cluster is:-
+-- $ kubectl get cs    <---- NOTE: 'cs' stands for 'component statuses
+
+
+'
